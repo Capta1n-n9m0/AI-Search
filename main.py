@@ -1,4 +1,5 @@
-from GameState import GameState, GameStateNode, MOVE_NAMES
+from GameState import GameState, GameStateNode, MOVE_NAMES, display_path, generate_target
+import numpy as np
 
 
 class BFS:
@@ -15,6 +16,8 @@ class BFS:
     self.queue.append(self.start)
     while len(self.queue) > 0:
       node = self.queue.pop(0)
+      if node == self.target:
+        return node.get_path()
       node.create_children()
       for child in node.children:
         if child == self.target:
@@ -25,8 +28,7 @@ class BFS:
       
   
 def main():
-  target = GameState()
-  target.fill([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
+  target = generate_target(3)
   start = GameState()
   start.create(3)
   

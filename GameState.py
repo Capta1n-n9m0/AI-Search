@@ -39,7 +39,7 @@ class GameState:
     self.shuffle()
   
   def shuffle(self):
-    for i in range(50):
+    for i in range(20):
       self.move(np.random.randint(4))
   
   def move(self, direction):
@@ -77,7 +77,7 @@ class GameState:
   def print(self):
     for i in range(self.size):
       for j in range(self.size):
-        print(self.board[i, j], end=' ')
+        print(f"{self.board[i, j]:^3}", end=' ')
       print()
     print()
   
@@ -142,6 +142,21 @@ class GameStateNode:
   def __repr__(self):
     return str(self.game)
 
+
+def display_path(path, game):
+  print('Start:')
+  game.print()
+  for i in path:
+    print(MOVE_NAMES[i])
+    game.move(i)
+    game.print()
+  
+  
+def generate_target(size):
+  target = GameState()
+  target.fill(np.arange(1, size * size + 1).reshape(size, size))
+  target.board[size - 1, size - 1] = 0
+  return target
 
 def main():
   size = int(input('Enter the size of the puzzle (3-25): '))
