@@ -158,6 +158,7 @@ def generate_target(size):
   target.board[size - 1, size - 1] = 0
   return target
 
+
 def main():
   size = int(input('Enter the size of the puzzle (3-25): '))
   if size < MIN_PUZZLE_SIZE or size > MAX_PUZZLE_SIZE:
