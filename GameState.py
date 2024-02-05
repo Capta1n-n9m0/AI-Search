@@ -10,6 +10,7 @@ DIR_RIGHT = 3
 
 MOVE_NAMES = ['up', 'down', 'left', 'right']
 
+
 class GameState:
   size: int
   board: np.ndarray
@@ -21,14 +22,14 @@ class GameState:
     self.empty = (0, 0)
   
   def fill(self, board, empty=None):
-    self.board = board
+    self.board = np.array(board)
     self.empty = empty
     if empty is None:
-      self.empty = np.where(board == 0)
-      if len(self.empty[0]) == 0:
+      self.empty = np.where(self.board == 0)
+      if len(self.empty) == 0:
         raise ValueError('Board has no empty cell')
-      self.empty = (self.empty[0][0], self.empty[1][0])
-    self.size = board.shape[0]
+      self.empty = (self.empty[0], self.empty[1])
+    self.size = self.board.shape[0]
   
   def create(self, size):
     self.size = size
@@ -38,7 +39,7 @@ class GameState:
     self.shuffle()
   
   def shuffle(self):
-    for i in range(1000):
+    for i in range(50):
       self.move(np.random.randint(4))
   
   def move(self, direction):
@@ -68,13 +69,10 @@ class GameState:
       self.empty = (self.empty[0], self.empty[1] + 1)
     return True
   
-  def is_target(self, target):
-    return np.array_equal(self.board, target)
-  
   def is_solved(self):
-    target = np.arange(1, self.size * self.size).reshape(self.size, self.size)
+    target = np.arange(1, self.size * self.size + 1).reshape(self.size, self.size)
     target[self.size - 1, self.size - 1] = 0
-    return self.is_target(target)
+    return self.board == target
   
   def print(self):
     for i in range(self.size):
@@ -93,6 +91,13 @@ class GameState:
   
   def __hash__(self):
     return hash(self.board.tobytes())
+  
+  def __str__(self):
+    return str(self.board)
+  
+  def __repr__(self):
+    return str(self.board)
+
 
 class GameStateNode:
   game: GameState
@@ -100,17 +105,20 @@ class GameStateNode:
   children: list["GameStateNode"]
   direction: int
   
-  def __init__(self, game, parent, direction):
+  def __init__(self, game: GameState, parent: "GameStateNode" = None, direction=None):
     self.game = game
     self.parent = parent
     self.direction = direction
+    self.children = []
   
   def get_path(self):
     if self.parent is None:
-      return [self.direction]
+      return []
     return self.parent.get_path() + [self.direction]
   
   def create_children(self):
+    if self.children:
+      return
     self.children = []
     for i in range(4):
       new_game = self.game.copy()
@@ -127,6 +135,12 @@ class GameStateNode:
   
   def __hash__(self):
     return hash(self.game)
+  
+  def __str__(self):
+    return str(self.game)
+  
+  def __repr__(self):
+    return str(self.game)
 
 
 def main():
