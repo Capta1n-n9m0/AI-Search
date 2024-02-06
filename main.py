@@ -1,56 +1,28 @@
-from GameState import GameState, GameStateNode
-from Search import Search
-from queue import PriorityQueue
+from GameState import GameState, MOVE_NAMES
+from Heuristics import ManhattanDistance
+from Search import AStar
 
 
-class ManhattanDistance:
-	target: GameState
-	positions: list[tuple[int, int]]
+def main():
+	target = GameState().create(5)
+	start = GameState().create(5).shuffle(50)
 	
-	def __init__(self, target: GameState):
-		self.target = target
-		self.positions = [(0, 0) for _ in range(target.size ** 2)]
-		for i in range(target.board.shape[0]):
-			for j in range(target.board.shape[1]):
-				self.positions[target.board[i][j]] = (i, j)
+	print("Target:")
+	target.print()
+	print("Start:")
+	start.print()
 	
-	def calculate(self, game: GameState):
-		distance = 0
-		for i in range(game.board.shape[0]):
-			for j in range(game.board.shape[1]):
-				if game.board[i][j] != 0:
-					x, y = self.positions[game.board[i][j]]
-					distance += abs(x - i) + abs(y - j)
-		return distance
-	
-	def __call__(self, game: GameState):
-		return self.calculate(game)
-
-
-class AStar(Search):
-	target: GameState
-	heuristics: ManhattanDistance
-	queue: PriorityQueue[(int, GameStateNode)]
-	
-	def __init__(self, target: GameState, heuristics: ManhattanDistance):
-		self.target = target
-		self.heuristics = heuristics
+	manhattan = ManhattanDistance(target)
+	ast = AStar(target, manhattan)
+	path = ast.solve(start)
+	if path is None:
+		print("No solution")
+	else:
+		print(f"Solution: {len(path)} moves")
+		print(path)
+		print([MOVE_NAMES[i] for i in path])
 		
-	def solve(self, start: GameState):
-		self.queue = PriorityQueue()
-		start_node = GameStateNode(start)
-		self.queue.put((0, start_node))
-		while not self.queue.empty():
-			temp = self.queue.get()
-			node: GameStateNode = temp[1]
-			if node.game == self.target:
-				return node.get_path()
-			if node.is_in_path(self.target):
-				continue
-			node.create_children()
-			for child in node.children:
-				if not node.is_in_path(child.game):
-					self.queue.put((self.heuristics(child.game), child))
-		return None
-	
+
+if __name__ == "__main__":
+	main()
 	

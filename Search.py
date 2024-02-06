@@ -1,6 +1,8 @@
-from GameState import GameState, GameStateNode, MOVE_NAMES, generate_target
+from queue import PriorityQueue
+from GameState import GameState, GameStateNode, MOVE_NAMES
 from abc import ABC, abstractmethod
-import numpy as np
+from Heuristics import Heuristics
+
 
 class Search(ABC):
 	@abstractmethod
@@ -33,13 +35,35 @@ class BFS(Search):
 		return None
 
 
+class AStar(Search):
+	target: GameState
+	heuristics: Heuristics
+	queue: PriorityQueue[tuple[int, GameStateNode]]
+	
+	def __init__(self, target: GameState, heuristics: Heuristics):
+		self.target = target
+		self.heuristics = heuristics
+	
+	def solve(self, start: GameState):
+		self.queue = PriorityQueue()
+		start_node = GameStateNode(start)
+		self.queue.put((0, start_node))
+		while not self.queue.empty():
+			_, node = self.queue.get()
+			if node.game == self.target:
+				return node.get_path()
+			if node.is_in_path(self.target):
+				continue
+			node.create_children()
+			for child in node.children:
+				if not node.is_in_path(child.game):
+					self.queue.put((self.heuristics(child.game) + child.depth, child))
+		return None
+
+
 def main():
-	t_str = "0 1 2 3 4 5 6 7 8".split(' ')
-	s_str = "0 3 8 4 1 7 2 6 5".split(' ')
-	target = GameState()
-	target.fill(np.array(list(map(int, t_str))).reshape(3, 3))
-	start = GameState()
-	start.fill(np.array(list(map(int, s_str))).reshape(3, 3))
+	target = GameState().create(3)
+	start = GameState().create(3).shuffle(20)
 	
 	print("Target:")
 	target.print()

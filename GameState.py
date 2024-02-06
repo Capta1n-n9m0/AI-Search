@@ -30,16 +30,19 @@ class GameState:
         raise ValueError('Board has no empty cell')
       self.empty = (self.empty[0], self.empty[1])
     self.size = self.board.shape[0]
+    return self
   
   def create(self, size):
     self.size = size
     self.board = np.arange(1, size * size + 1).reshape(size, size)
     self.empty = (size - 1, size - 1)
     self.board[self.empty] = 0
+    return self
   
   def shuffle(self, moves=1000):
     for i in range(moves):
       self.move(np.random.randint(4))
+    return self
   
   def move(self, direction):
     if direction == DIR_UP:
@@ -142,6 +145,9 @@ class GameStateNode:
   
   def __repr__(self):
     return str(self.game)
+  
+  def __lt__(self, other):
+    return 0
 
 
 def display_path(path, game):
@@ -152,13 +158,6 @@ def display_path(path, game):
     game.move(i)
     game.print()
   
-  
-def generate_target(size):
-  target = GameState()
-  target.fill(np.arange(1, size * size + 1).reshape(size, size))
-  target.board[size - 1, size - 1] = 0
-  return target
-
 
 def main():
   size = int(input('Enter the size of the puzzle (3-25): '))
