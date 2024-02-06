@@ -1,6 +1,6 @@
 from GameState import GameState, GameStateNode, MOVE_NAMES, generate_target
 from abc import ABC, abstractmethod
-
+import numpy as np
 
 class Search(ABC):
 	@abstractmethod
@@ -28,15 +28,18 @@ class BFS(Search):
 			for child in node.children:
 				if child == self.target:
 					return child.get_path()
-				if not self.target.is_in_path(child.game):
+				if not node.is_in_path(child.game):
 					self.queue.append(child)
 		return None
 
 
 def main():
-	target = generate_target(3)
+	t_str = "0 1 2 3 4 5 6 7 8".split(' ')
+	s_str = "0 3 8 4 1 7 2 6 5".split(' ')
+	target = GameState()
+	target.fill(np.array(list(map(int, t_str))).reshape(3, 3))
 	start = GameState()
-	start.create(3)
+	start.fill(np.array(list(map(int, s_str))).reshape(3, 3))
 	
 	print("Target:")
 	target.print()
@@ -48,6 +51,7 @@ def main():
 	if path is None:
 		print("No solution")
 	else:
+		print(f"Solution: {len(path)} moves")
 		print(path)
 		print([MOVE_NAMES[i] for i in path])
 

@@ -36,10 +36,9 @@ class GameState:
     self.board = np.arange(1, size * size + 1).reshape(size, size)
     self.empty = (size - 1, size - 1)
     self.board[self.empty] = 0
-    self.shuffle()
   
-  def shuffle(self):
-    for i in range(20):
+  def shuffle(self, moves=1000):
+    for i in range(moves):
       self.move(np.random.randint(4))
   
   def move(self, direction):
@@ -104,12 +103,14 @@ class GameStateNode:
   parent: "GameStateNode"
   children: list["GameStateNode"]
   direction: int
+  depth: int
   
-  def __init__(self, game: GameState, parent: "GameStateNode" = None, direction=None):
+  def __init__(self, game: GameState, parent: "GameStateNode" = None, direction=None, depth=0):
     self.game = game
     self.parent = parent
     self.direction = direction
     self.children = []
+    self.depth = depth
   
   def get_path(self):
     if self.parent is None:
@@ -123,9 +124,9 @@ class GameStateNode:
     for i in range(4):
       new_game = self.game.copy()
       if new_game.move(i):
-        self.children.append(GameStateNode(new_game, self, i))
+        self.children.append(GameStateNode(new_game, self, i, self.depth + 1))
         
-  def is_in_path(self, game):
+  def is_in_path(self, game: GameState):
     if self.parent is None:
       return self.game == game
     return self.game == game or self.parent.is_in_path(game)
