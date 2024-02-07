@@ -39,9 +39,23 @@ class GameState:
     self.board[self.empty] = 0
     return self
   
-  def shuffle(self, moves=1000):
-    for i in range(moves):
-      self.move(np.random.randint(4))
+  def shuffle(self, moves=20):
+    i = 0
+    previous = -1
+    while i < moves:
+      direction = np.random.randint(4)
+      if DIR_UP == previous and direction == DIR_DOWN:
+        continue
+      if DIR_DOWN == previous and direction == DIR_UP:
+        continue
+      if DIR_LEFT == previous and direction == DIR_RIGHT:
+        continue
+      if DIR_RIGHT == previous and direction == DIR_LEFT:
+        continue
+      if self.move(direction):
+        previous = direction
+        i += 1
+        
     return self
   
   def move(self, direction):

@@ -1,7 +1,7 @@
-from queue import PriorityQueue
-from GameState import GameState, GameStateNode, MOVE_NAMES
+from GameState import GameState, GameStateNode
 from abc import ABC, abstractmethod
 from Heuristics import Heuristics
+from IQueue import PriorityQueue, IQueue, IMetered
 
 
 class Search(ABC):
@@ -38,14 +38,14 @@ class BFS(Search):
 class AStar(Search):
 	target: GameState
 	heuristics: Heuristics
-	queue: PriorityQueue[tuple[int, GameStateNode]]
+	queue: IQueue[tuple[int, GameStateNode]] | IMetered
 	
-	def __init__(self, target: GameState, heuristics: Heuristics):
+	def __init__(self, target: GameState, heuristics: Heuristics, queue: IQueue[tuple[int, GameStateNode]] = PriorityQueue()):
 		self.target = target
 		self.heuristics = heuristics
+		self.queue = queue
 	
 	def solve(self, start: GameState):
-		self.queue = PriorityQueue()
 		start_node = GameStateNode(start)
 		self.queue.put((0, start_node))
 		while not self.queue.empty():
@@ -59,26 +59,9 @@ class AStar(Search):
 				if not node.is_in_path(child.game):
 					self.queue.put((self.heuristics(child.game) + child.depth, child))
 		return None
-
-
-def main():
-	target = GameState().create(3)
-	start = GameState().create(3).shuffle(20)
 	
-	print("Target:")
-	target.print()
-	print("Start:")
-	start.print()
+	def get_metrics(self):
+		if not isinstance(self.queue, IMetered):
+			return None
+		return self.queue.get_count(), len(self.queue), self.queue.get_count() - len(self.queue)
 	
-	bfs = BFS(target)
-	path = bfs.solve(start)
-	if path is None:
-		print("No solution")
-	else:
-		print(f"Solution: {len(path)} moves")
-		print(path)
-		print([MOVE_NAMES[i] for i in path])
-
-
-if __name__ == "__main__":
-	main()
