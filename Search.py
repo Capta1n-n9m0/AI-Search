@@ -3,22 +3,24 @@ from abc import ABC, abstractmethod
 from Heuristics import Heuristics
 from IQueue import PriorityQueue, IQueue, IMetered
 
-
+# Abstract class for search algorithms
 class Search(ABC):
 	@abstractmethod
 	def solve(self, start: GameState):
 		pass
 
-
+# Breadth-first search algorithm
 class BFS(Search):
 	target: GameStateNode
 	start: GameStateNode
 	queue: list[GameStateNode]
 	
+	# Create a new breadth-first search algorithm with the given target game state
 	def __init__(self, target: GameState):
 		self.target = GameStateNode(target)
 		self.queue = []
 	
+	# Solve the puzzle starting from the given game state
 	def solve(self, start: GameState):
 		self.start = GameStateNode(start)
 		self.queue.append(self.start)
@@ -35,16 +37,20 @@ class BFS(Search):
 		return None
 
 
+# A* search algorithm
 class AStar(Search):
 	target: GameState
 	heuristics: Heuristics
 	queue: IQueue[tuple[int, GameStateNode]] | IMetered
 	
+	# Create a new A* search algorithm with the given target game state, heuristics, and queue
+	# The queue is a priority queue by default
 	def __init__(self, target: GameState, heuristics: Heuristics, queue: IQueue[tuple[int, GameStateNode]] = PriorityQueue()):
 		self.target = target
 		self.heuristics = heuristics
 		self.queue = queue
 	
+	# Solve the puzzle starting from the given game state
 	def solve(self, start: GameState):
 		start_node = GameStateNode(start)
 		self.queue.put((0, start_node))
@@ -60,6 +66,7 @@ class AStar(Search):
 					self.queue.put((self.heuristics(child.game) + child.depth, child))
 		return None
 	
+	# Get the metrics of the search algorithm
 	def get_metrics(self):
 		if not isinstance(self.queue, IMetered):
 			return None

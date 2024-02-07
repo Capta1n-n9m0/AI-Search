@@ -11,6 +11,7 @@ DIR_RIGHT = 3
 MOVE_NAMES = ['up', 'down', 'left', 'right']
 
 
+# GameState class represents the state of the puzzle
 class GameState:
   size: int
   board: np.ndarray
@@ -21,7 +22,8 @@ class GameState:
     self.board = np.array([])
     self.empty = (0, 0)
   
-  def fill(self, board, empty=None):
+  # Fill the game state with the given board and empty cell
+  def fill(self, board: list[list] | np.ndarray, empty: tuple[int, int] = None):
     self.board = np.array(board)
     self.empty = empty
     if empty is None:
@@ -32,14 +34,16 @@ class GameState:
     self.size = self.board.shape[0]
     return self
   
-  def create(self, size):
+  # Create a new game state with the given size
+  def create(self, size: int):
     self.size = size
     self.board = np.arange(1, size * size + 1).reshape(size, size)
     self.empty = (size - 1, size - 1)
     self.board[self.empty] = 0
     return self
   
-  def shuffle(self, moves=20):
+  # Shuffle the game state with the given number of moves
+  def shuffle(self, moves: int = 20):
     i = 0
     previous = -1
     while i < moves:
@@ -55,10 +59,11 @@ class GameState:
       if self.move(direction):
         previous = direction
         i += 1
-        
+    
     return self
   
-  def move(self, direction):
+  # Move the empty cell in the given direction
+  def move(self, direction: int):
     if direction == DIR_UP:
       if self.empty[0] == 0:
         return False
@@ -85,11 +90,13 @@ class GameState:
       self.empty = (self.empty[0], self.empty[1] + 1)
     return True
   
+  # Check if the puzzle is solved
   def is_solved(self):
     target = np.arange(1, self.size * self.size + 1).reshape(self.size, self.size)
     target[self.size - 1, self.size - 1] = 0
     return self.board == target
   
+  # Print the game state
   def print(self):
     for i in range(self.size):
       for j in range(self.size):
@@ -97,24 +104,29 @@ class GameState:
       print()
     print()
   
+  # Create a copy of the game state
   def copy(self):
     new_game = GameState()
     new_game.fill(self.board.copy())
     return new_game
   
-  def __eq__(self, other):
+  # Compare the game state with another game state
+  def __eq__(self, other: "GameState"):
     return np.array_equal(self.board, other.board)
   
+  # Get the hash of the game state
   def __hash__(self):
     return hash(self.board.tobytes())
   
+  # Convert the game state to a string
   def __str__(self):
     return str(self.board)
   
+  # Convert the game state to a string
   def __repr__(self):
     return str(self.board)
 
-
+# GameStateNode class is a wrapper for the game state that is used in the tree search algorithms
 class GameStateNode:
   game: GameState
   parent: "GameStateNode"
@@ -122,18 +134,21 @@ class GameStateNode:
   direction: int
   depth: int
   
-  def __init__(self, game: GameState, parent: "GameStateNode" = None, direction=None, depth=0):
+  # Create a new game state node with the given game state, parent, direction, and depth
+  def __init__(self, game: GameState, parent: "GameStateNode" = None, direction: int = None, depth: int = 0):
     self.game = game
     self.parent = parent
     self.direction = direction
     self.children = []
     self.depth = depth
   
+  # Get the path from the root to the current node
   def get_path(self):
     if self.parent is None:
       return []
     return self.parent.get_path() + [self.direction]
   
+  # Create the children of the current node
   def create_children(self):
     if self.children:
       return
@@ -142,37 +157,44 @@ class GameStateNode:
       new_game = self.game.copy()
       if new_game.move(i):
         self.children.append(GameStateNode(new_game, self, i, self.depth + 1))
-        
+  
+  # Check if the given game state is in the path from the root to the current node
   def is_in_path(self, game: GameState):
     if self.parent is None:
       return self.game == game
     return self.game == game or self.parent.is_in_path(game)
   
-  def __eq__(self, other):
+  # Compare the game state node with another game state node
+  def __eq__(self, other: "GameStateNode"):
     return self.game == other.game
   
+  # Get the hash of the game state node
   def __hash__(self):
     return hash(self.game)
   
+  # Convert the game state node to a string
   def __str__(self):
     return str(self.game)
   
+  # Convert the game state node to a string
   def __repr__(self):
     return str(self.game)
   
-  def __lt__(self, other):
+  # Compare the game state node with another game state node
+  # This is used in the priority queue to not throw an error when comparing nodes
+  def __lt__(self, other: "GameStateNode"):
     return 0
 
-
-def display_path(path, game):
+# Print the path to the solution with the given game state
+def display_path(path: list[int], game: GameState):
   print('Start:')
   game.print()
   for i in path:
     print(MOVE_NAMES[i])
     game.move(i)
     game.print()
-  
 
+# Main function that lets the user play the puzzle
 def main():
   size = int(input('Enter the size of the puzzle (3-25): '))
   if size < MIN_PUZZLE_SIZE or size > MAX_PUZZLE_SIZE:
@@ -193,5 +215,3 @@ def main():
 
 if __name__ == '__main__':
   main()
-
-
