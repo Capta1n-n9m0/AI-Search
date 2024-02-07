@@ -1,7 +1,7 @@
 from GameState import GameState, GameStateNode
 from abc import ABC, abstractmethod
 from Heuristics import Heuristics
-from IQueue import PriorityQueue, IQueue, IMetered
+from Queue import PriorityQueue, IQueue, IMetered
 
 # Abstract class for search algorithms
 class Search(ABC):

@@ -1,7 +1,7 @@
 from GameState import GameState, MOVE_NAMES
 from Heuristics import ManhattanDistance
 from Search import AStar
-from IQueue import MeteredPriorityQueue
+from Queue import MeteredPriorityQueue
 from time import perf_counter_ns
 
 
