@@ -1,7 +1,7 @@
 from GameState import GameState, GameStateNode
 from abc import ABC, abstractmethod
 from Heuristics import Heuristics
-from Queue import PriorityQueue, IQueue, IMetered
+from Queue import PriorityQueue, IQueue, IMetered, Queue
 
 # Abstract class for search algorithms
 class Search(ABC):
@@ -13,19 +13,19 @@ class Search(ABC):
 class BFS(Search):
 	target: GameStateNode
 	start: GameStateNode
-	queue: list[GameStateNode]
+	queue: IQueue[GameStateNode] | IMetered
 	
 	# Create a new breadth-first search algorithm with the given target game state
-	def __init__(self, target: GameState):
+	def __init__(self, target: GameState, queue: IQueue[GameStateNode] = Queue()):
 		self.target = GameStateNode(target)
-		self.queue = []
+		self.queue = queue
 	
 	# Solve the puzzle starting from the given game state
 	def solve(self, start: GameState):
 		self.start = GameStateNode(start)
-		self.queue.append(self.start)
-		while len(self.queue) > 0:
-			node = self.queue.pop(0)
+		self.queue.put(self.start)
+		while not self.queue.empty():
+			node = self.queue.get()
 			if node == self.target:
 				return node.get_path()
 			node.create_children()
@@ -33,8 +33,14 @@ class BFS(Search):
 				if child == self.target:
 					return child.get_path()
 				if not node.is_in_path(child.game):
-					self.queue.append(child)
+					self.queue.put(child)
 		return None
+	
+	# Get the metrics of the search algorithm
+	def get_metrics(self):
+		if not isinstance(self.queue, IMetered):
+			return None
+		return self.queue.get_count(), len(self.queue), self.queue.get_count() - len(self.queue)
 
 
 # A* search algorithm
