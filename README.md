@@ -27,14 +27,36 @@ The implementation of the project is done in Python. The code is divided into 3 
 - `Queue.py`: This file contains the implementation of the queue that is used in the BFS algorithm and the priority queue that is used in the A* Search algorithm. It also contains the implementation of metered queues that is used to measure the number of nodes that are expanded during the search.
 
 ## Running the Program
-To run the program, you need to have Python installed on your computer. You can run the program by running the following command in the terminal:
+To run the program, you need to have Python installed on your computer.
+**Make sure you have Python 3.11 or later installed on your computer.**
+1. You need to clone the repository to your computer. You can do this by running the following command in the terminal:
+```
+git clone https://github.com/Capta1n-n9m0/AI-Search.git
+```
+2. After you have cloned the repository, you need to navigate to the directory where the repository is located. You can do this by running the following command in the terminal:
+```
+cd AI-Search
+```
+3. After that you need to create a virtual environment. You can do this by running the following command in the terminal:
+```
+python -m venv venv
+```
+4. After you have created the virtual environment, you need to activate it. You can do this by running the following command in the terminal:
+```
+source venv/bin/activate
+```
+5. After you have activated the virtual environment, you need to install the required packages. You can do this by running the following command in the terminal:
+```
+pip install -r requirements.txt
+```
+6. After you have installed the required packages, you can run the program.
 ```
 python main.py
 ```
 The program will run the search algorithms on the demo states and print the results to the terminal.
 
 ## Conclusion
-In this project, I implemented and compared different search algorithms. I implemented the BFS and A* Search algorithms and used them to solve the 8-puzzle problem. I also implemented the Manhattan distance heuristic function and used it in the A* Search algorithm. I compared the performance of the search algorithms and found that A* Search is more efficient than BFS. The reason for this is that A* Search uses a heuristic function to guide the search, while BFS does not use any heuristic function. This makes A* Search more efficient than BFS. 
+In this project, I implemented and compared different search algorithms. I implemented the BFS and A* Search algorithms and used them to solve the 15-puzzle problem. I also implemented the Manhattan distance heuristic function and used it in the A* Search algorithm. I compared the performance of the search algorithms and found that A* Search is more efficient than BFS. The reason for this is that A* Search uses a heuristic function to guide the search, while BFS does not use any heuristic function. This makes A* Search more efficient than BFS. 
 ```
 Target:
  1   2   3   4  
