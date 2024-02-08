@@ -8,7 +8,7 @@ In this project, I am going to implement and compare different search algorithms
 
 
 ## Problem
-The problem that I am going to solve is the 8-puzzle problem. The 8-puzzle problem is a puzzle that is played on a 3x3 grid with 8 tiles. The tiles are numbered from 1 to 8 and there is one empty tile. The goal of the puzzle is to arrange the tiles in ascending order. The puzzle is solved when the tiles are arranged in the following order:
+The problem I will solve is the 8-puzzle problem. The 8-puzzle problem is a puzzle that is played in a 3x3 grid in which there are 8 tiles. The tiles are numbered 1 through 8 and there is one empty tile. The objective of the puzzle is to place the tiles as given in the below example in an increasing order. The puzzle is considered solved by that tile layout:
 ```
 1 2 3
 4 5 6
@@ -16,15 +16,16 @@ The problem that I am going to solve is the 8-puzzle problem. The 8-puzzle probl
 ```
 The 0 represents the empty tile.
 
-Our code allows us to solve generalized n-puzzle problems. The user can specify the size of the puzzle and the initial state of the puzzle. The code will then solve the puzzle using the search algorithms that I implemented.
+My code allows solving generalized n-puzzle problems. The user can specify the size of the puzzle and the initial state of the puzzle. The code will then solve the puzzle using the search algorithms that I implemented.
 
 ## Implementation
-The implementation of the project is done in Python. The code is divided into 3 files:
-- `main.py`: This file contains the main function that is used to run the program. It creates demo states, and runs the search algorithm.
-- `GameState.py`: This file contains the implementation of the game state. The `GameState` is a class that contains the current state of the puzzle. It also contains the implementation of the wrapper of the `GameState` class: `GameStateNode`. The `GameStateNode` class is used to represent the state of the puzzle in a graph. The `GameStateNode` class contains the parent state, the action that was taken to reach the current state, the depth of the state, and the direction of the state from the parent state.
-- `Search.py`: This file contains the implementation of the search algorithms. The search algorithms that are implemented are BFS and A* Search
-- `Heuristic.py`: This file contains the implementation of the heuristic function that is used in the A* Search algorithm. The heuristic function that is used is the Manhattan distance.
-- `Queue.py`: This file contains the implementation of the queue that is used in the BFS algorithm and the priority queue that is used in the A* Search algorithm. It also contains the implementation of metered queues that is used to measure the number of nodes that are expanded during the search.
+The project is programmed using Python, and the code is divided into 5 files:
+
+- `main.py`: This file encapsulates the main function to be run when using the program. It initializes demo states and launches the search algorithm.
+- `GameState.py`: It contains the implementation of the game state. The `GameState` is a class that contains the current state of the puzzle. It also contains the implementation of the wrapper of the class `GameState`: `GameStateNode`. The GameStateNode class is used to represent the state of the puzzle in a graph. The `GameStateNode` class contains the parent state, the action from the parent to the current state, the depth of the state, and the direction from the parent state.
+- `Search.py`: It contains the implementation of the search algorithms. The implemented search algorithms are BFS and A* Search.
+- `Heuristic.py`: This file contains the implementation of the heuristic function used for the A* Search algorithm. The heuristic function to be used is the Manhattan distance.
+- `Queue.py`: Contains the implementation of the queue used in the BFS algorithm and the priority queue used in the A* Search algorithm. Moreover, it contains the implementation of metered queues to measure the count of nodes that get expanded during the search.
 
 ## Running the Program
 To run the program, you need to have Python installed on your computer.
@@ -56,7 +57,7 @@ python main.py
 The program will run the search algorithms on the demo states and print the results to the terminal.
 
 ## Conclusion
-In this project, I implemented and compared different search algorithms. I implemented the BFS and A* Search algorithms and used them to solve the 15-puzzle problem. I also implemented the Manhattan distance heuristic function and used it in the A* Search algorithm. I compared the performance of the search algorithms and found that A* Search is more efficient than BFS. The reason for this is that A* Search uses a heuristic function to guide the search, while BFS does not use any heuristic function. This makes A* Search more efficient than BFS. 
+In this project, I developed and compared implementations of several different search algorithms: BFS and A* Search, applied to solve the 15-puzzle problem. I have also implemented the heuristic function in question, the Manhattan distance heuristic, for use in A* Search. The comparison of the two search algorithms shows that A* Search performs more effectively than BFS because A* Search uses a heuristic function to guide the search, while BFS does not use any heuristic function. This makes A* Search more efficient than BFS. The results of the comparison are as follows:
 ```
 Target:
  1   2   3   4  
