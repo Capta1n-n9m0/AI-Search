@@ -1,4 +1,5 @@
 import numpy as np
+import numpy.typing as npt
 
 MIN_PUZZLE_SIZE = 3
 MAX_PUZZLE_SIZE = 25
@@ -14,16 +15,16 @@ MOVE_NAMES = ['up', 'down', 'left', 'right']
 # GameState class represents the state of the puzzle
 class GameState:
   size: int
-  board: np.ndarray
+  # 2D array representing the board
+  board: npt.NDArray
   empty: tuple
+  possible_moves: list[bool]
   
   def __init__(self):
     self.size = 0
-    self.board = np.array([])
-    self.empty = (0, 0)
   
   # Fill the game state with the given board and empty cell
-  def fill(self, board: list[list] | np.ndarray, empty: tuple[int, int] = None):
+  def fill(self, board: list[list] | npt.NDArray, empty: tuple[int, int] = None):
     self.board = np.array(board)
     self.empty = empty
     if empty is None:
@@ -61,6 +62,14 @@ class GameState:
         i += 1
     
     return self
+  
+  def possible_moves(self):
+    return [
+      self.empty[0] > 0,
+      self.empty[0] < self.size - 1,
+      self.empty[1] > 0,
+      self.empty[1] < self.size - 1
+    ]
   
   # Move the empty cell in the given direction
   def move(self, direction: int):
@@ -153,16 +162,17 @@ class GameStateNode:
     if self.children:
       return
     self.children = []
+    
+    possible_moves = self.game.possible_moves()
     for i in range(4):
-      new_game = self.game.copy()
-      if new_game.move(i):
+      if possible_moves[i]:
+        new_game = self.game.copy()
+        new_game.move(i)
         self.children.append(GameStateNode(new_game, self, i, self.depth + 1))
   
   # Check if the given game state is in the path from the root to the current node
   def is_in_path(self, game: GameState):
-    if self.parent is None:
-      return self.game == game
-    return self.game == game or self.parent.is_in_path(game)
+    return self.game == game or (self.parent is not None and self.parent.is_in_path(game))
   
   # Compare the game state node with another game state node
   def __eq__(self, other: "GameStateNode"):

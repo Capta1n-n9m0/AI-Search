@@ -1,12 +1,14 @@
 from GameState import GameState, MOVE_NAMES
-from Heuristics import ManhattanDistance
+from Heuristics import LinearConflict
 from Search import AStar, BFS
 from Queue import MeteredPriorityQueue, MeteredQueue
 from time import perf_counter_ns
 
+
+
 def run_astar(target, start):
 	# Solve the puzzle
-	manhattan = ManhattanDistance(target)
+	manhattan = LinearConflict(target)
 	ast = AStar(target, manhattan, MeteredPriorityQueue())
 	start_time = perf_counter_ns()
 	path = ast.solve(start)
@@ -55,7 +57,14 @@ def run_bfs(target, start):
 def main():
 	# Create the target and start game states
 	target = GameState().create(4)
-	start = target.copy().shuffle(12)
+	start = GameState().fill([
+		[15, 2,  1,  12],
+		[8,  5,  6,  11],
+		[4,  9,  10,  7],
+		[3,  14,  13,  0],
+	])
+	# target = GameState().create(4)
+	# start = GameState().create(4).shuffle(35)
 	
 	# Print the game states
 	print("Target:")
@@ -70,10 +79,20 @@ def main():
 	print()
 	
 	# Run the breadth-first search algorithm
-	print("Breadth-first search algorithm")
-	run_bfs(target.copy(), start.copy())
+	# print("Breadth-first search algorithm")
+	# run_bfs(target.copy(), start.copy())
 		
 
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except KeyboardInterrupt:
+		pass
+	# with cProfile.Profile() as pr:
+	# 	try:
+	# 		main()
+	# 	except KeyboardInterrupt:
+	# 		pass
+	# 	pr.print_stats(sort="cumtime")
+	# 	pr.dump_stats("main.prof")
 	
